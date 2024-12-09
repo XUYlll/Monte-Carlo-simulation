@@ -1,0 +1,107 @@
+# Load ggplot2 for data visualization
+library(ggplot2)
+
+# Generate cost distribution data for distilled grain waste
+DGW <- rnorm(1000, mean = 500, sd = 120)  # Normal distribution for wine residue cost (mean = 500, sd = 120)
+DGW <- round(DGW, 0)  # Round to the nearest integer
+hist(DGW, breaks = 30)  # Plot histogram
+
+# Generate cost distribution data for wine-making sludge
+WS <- rnorm(1000, mean = 300, sd = 100)  # Normal distribution for sludge cost (mean = 300, sd = 100)
+WS <- round(WS, 0)
+hist(WS, breaks = 30)
+
+# Generate cost distribution data for biochar
+Bi <- rnorm(1000, mean = 2100, sd = 200)  # Normal distribution for biochar cost
+Bi <- round(Bi, 0)
+hist(Bi, breaks = 30)
+
+# Generate cost distribution data for CaO
+CaO <- rnorm(1000, mean = 2300, sd = 80)  # Normal distribution for lime cost
+CaO <- round(CaO, 0)
+hist(CaO, breaks = 30)
+
+# Generate cost distribution data for KOH
+KOH <- rnorm(1000, mean = 3200, sd = 400)  # Normal distribution for KCl cost
+KOH <- round(KOH, 0)
+hist(KOH, breaks = 30)
+
+# Generate income distribution data for urea
+N <- rnorm(1000, mean = 2500, sd = 550)  # Normal distribution for urea income
+N <- round(N , 0)
+hist(N, breaks = 30)
+
+# Generate income distribution data for P2O5
+P <- rnorm(1000, mean = 2300, sd = 718)  # Normal distribution for P2O5 income
+P <- round(P, 0)
+hist(P, breaks = 30)
+
+# Generate income distribution data for K2O
+K <- rnorm(1000, mean = 4500, sd = 916)  # Normal distribution for K2O income
+K <- round(K, 0)
+hist(K, breaks = 30)
+
+# Combine all cost and income data into a single dataframe
+f1 <- data.frame(DGW, WS, Bi, CaO, KOH, N, P, K)
+
+# Calculate net income for three different production plans
+f2 <- data.frame()
+f3 <- c()
+f4 <- c()
+f5 <- c()
+
+# Random sampling and net income calculation for Plan 1
+for (i in 1:5000) f3 <- 0.0208 / 14.01 / 2 * 60.06 * sample(N, 2000, replace = T) + 
+  0.0055 / 30.97 / 2 * 252.06 * sample(P, 2000, replace = T) + 
+  0.0094 / 39.0983 / 2 * 174.26 * sample(K, 2000, replace = T) - 
+  80 * 4.47 / 1000 * sample(DGW, 2000, replace = T) - 
+  20 * 4.47 / 1000 * sample(WS, 2000, replace = T) - 
+  0.7 * 4.47 / 1000 * sample(CaO, 2000, replace = T) - 
+  3003.67 * 0.8 * 7.1 / 1000
+
+# Random sampling and net income calculation for Plan 2
+for (i in 1:5000) f4 <- 0.0222 / 14.01 / 2 * 60.06 * sample(N, 2000, replace = T) + 
+  0.0078 / 30.97 / 2 * 252.06 * sample(P, 2000, replace = T) + 
+  0.012 / 39.0983 / 2 * 174.26 * sample(K, 2000, replace = T) - 
+  80 * 4.03 / 1000 * sample(DGW, 2000, replace = T) - 
+  20 * 4.03 / 1000 * sample(WS, 2000, replace = T) - 
+  0.77 * 4.03 / 1000 * sample(CaO, 2000, replace = T) - 
+  10 * 4.03 / 1000 * sample(Bi, 2000, replace = T) - 
+  2262.5 * 0.8 * 7.1 / 1000
+
+# Random sampling and net income calculation for Plan 3
+for (i in 1:5000) f5 <- 0.0234 / 14.01 / 2 * 60.06 * sample(N, 2000, replace = T) + 
+  0.0082 / 30.97 / 2 * 252.06 * sample(P, 2000, replace = T) + 
+  0.0128 / 39.0983 / 2 * 174.26 * sample(K, 2000, replace = T) - 
+  80 * 4.02 / 1000 * sample(DGW, 2000, replace = T) - 
+  20 * 4.02 / 1000 * sample(WS, 2000, replace = T) - 
+  0.77 * 4.02 / 1000 * sample(CaO, 2000, replace = T) - 
+  0.1 * 4.02 / 1000 * sample(KOH, 2000, replace = T) - 
+  10 * 4.02 / 1000 * sample(Bi, 2000, replace = T) - 
+  2208.4 * 0.8 * 7.1 / 1000
+
+# Combine results for all plans
+f2 <- data.frame(value_1 = f3, value_2 = f4, value_3 = f5)
+hist(f2$value_1,breaks=30)
+hist(f2$value_2,breaks=30)
+summary(f2)
+# Visualization - Density plot
+ggplot() +
+  geom_density(data = f2, aes(value_1), color = "black", linetype = "dashed", binwidth = 150) +
+  geom_histogram(data = f2, aes(x = value_2, y = ..density..), fill = "#69b3a2", color = "#e9ecef", alpha = 0.8, binwidth = 150) +
+  geom_density(data = f2, aes(value_2), color = "blue4", linetype = "dashed", binwidth = 150) +
+  theme_bw() +
+  labs(fill = "", x = "Net income (RMB)")
+
+# Visualization - Frequency distribution histogram
+ggplot() +
+  geom_histogram(data = f2, aes(x = value_2), fill = "#69b3a2", color = "#e9ecef", alpha = 0.8, binwidth = 150) +
+  geom_freqpoly(data = f2, aes(value_1), color = "black", linetype = "dashed", size = 0.65, binwidth = 150) +
+  geom_freqpoly(data = f2, aes(value_2), color = "blue4", linetype = "dashed", binwidth = 150) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  labs(fill = "", x = "Net income (RMB)", y = "Frequency") +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 250))
+
+# Save the results to a CSV file
+write.csv(f2, file = "f2.csv")
